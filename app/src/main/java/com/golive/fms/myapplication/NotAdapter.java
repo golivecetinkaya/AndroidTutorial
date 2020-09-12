@@ -47,7 +47,7 @@ public class NotAdapter extends ArrayAdapter<NotModel> {
         NotModel notModel = notModelArray.get(position);
 
         String notString  = notModel.getNot();
-        String dateString = notModel.getNot();
+        String dateString = notModel.getDate();
         int imageRes      = notModel.getImage();
 
         image.setImageResource(imageRes);

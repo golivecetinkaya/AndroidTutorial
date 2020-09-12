@@ -5,15 +5,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<NotModel> arrayList = new ArrayList();
     private NotAdapter notAdapter;
+
+    private FloatingActionButton floatingActionButton;
 
     private int time = 0;
 
@@ -46,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         listView = findViewById(R.id.listView_main);
 
+        floatingActionButton = findViewById(R.id.floating_add);
+
         String username = getIntent().getStringExtra("USERNAME");
 
         textViewUsername.setText(username);
@@ -62,6 +76,65 @@ public class MainActivity extends AppCompatActivity {
         notAdapter = new NotAdapter(MainActivity.this,0,arrayList);
 
         listView.setAdapter(notAdapter);
+
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Yeni Not Giriniz");
+
+                final View view1 = getLayoutInflater().inflate(R.layout.dialog, null);
+                builder.setView(view1);
+
+                builder.setPositiveButton("Tamam", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        EditText editTextDialog = view1.findViewById(R.id.edittext_dialog);
+
+                        String text = editTextDialog.getText().toString();
+                        sendDataDialog(text);
+
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+            }
+        });
+
+
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                NotModel notModel = arrayList.get(i);
+
+                Intent intent = new Intent(MainActivity.this, RestActivity.class);
+                startActivity(intent);
+
+            }
+        });
+
+    }
+
+    private void sendDataDialog(String text) {
+
+        Date dateFormat = new Date();
+
+        String date = new SimpleDateFormat("dd/MM/yyyy", (Locale.getDefault())).format(dateFormat);
+
+        NotModel notModel = new NotModel(text, date,0);
+
+        arrayList.add(notModel);
+
+        notAdapter.notifyDataSetChanged();
+
+
 
     }
 
